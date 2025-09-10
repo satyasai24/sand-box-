@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <Product Id="*" Name="Sandbox Manager" Language="1033" Version="1.0.0.0" Manufacturer="My Company" UpgradeCode="8C0408BB-03F0-4A95-3684-8CE77B961F2B">
+    <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
+
+    <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+    <MediaTemplate EmbedCab="yes" />
+
+    <Feature Id="ProductFeature" Title="Sandbox Manager" Level="1">
+      <ComponentGroupRef Id="ProductComponents" />
+      <ComponentRef Id="ApplicationShortcutDesktop" />
+      <ComponentRef Id="ApplicationShortcutStartMenu" />
+    </Feature>
+
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="ProgramFilesFolder">
+        <Directory Id="INSTALLFOLDER" Name="SandboxManager" />
+      </Directory>
+      <Directory Id="DesktopFolder" Name="Desktop" />
+      <Directory Id="ProgramMenuFolder">
+        <Directory Id="ApplicationProgramsFolder" Name="Sandbox Manager"/>
+      </Directory>
+    </Directory>
+
+    <DirectoryRef Id="INSTALLFOLDER">
+      <ComponentGroup Id="ProductComponents" >
+        <Component Id="SandboxManager.exe" Guid="ABA8F601-67F2-444E-451E-7BEC497D00DA">
+          <File Source="$(var.SandboxManager.TargetPath)" KeyPath="yes" />
+        </Component>
+      </ComponentGroup>
+    </DirectoryRef>
+
+    <DirectoryRef Id="DesktopFolder">
+        <Component Id="ApplicationShortcutDesktop" Guid="30D409DB-E0D6-4A9E-3E19-05E422A7AB6A">
+            <Shortcut Id="ApplicationDesktopShortcut" Name="Sandbox Manager" Description="Secure Sandbox Environment" Target="[#SandboxManager.exe]" WorkingDirectory="INSTALLFOLDER"/>
+            <RemoveFolder Id="RemoveDesktopFolder" On="uninstall"/>
+            <RegistryValue Root="HKCU" Key="Software\MyCompany\SandboxManager" Name="installed" Type="integer" Value="1" KeyPath="yes"/>
+        </Component>
+    </DirectoryRef>
+
+    <DirectoryRef Id="ApplicationProgramsFolder">
+        <Component Id="ApplicationShortcutStartMenu" Guid="89604608-EB58-4DCE-6008-7E344F81A247">
+            <Shortcut Id="ApplicationStartMenuShortcut" Name="Sandbox Manager" Description="Secure Sandbox Environment" Target="[#SandboxManager.exe]" WorkingDirectory="INSTALLFOLDER"/>
+            <RemoveFolder Id="RemoveApplicationProgramsFolder" On="uninstall"/>
+            <RegistryValue Root="HKCU" Key="Software\MyCompany\SandboxManager" Name="installed_start" Type="integer" Value="1" KeyPath="yes"/>
+        </Component>
+    </DirectoryRef>
+
+  </Product>
+</Wix>
