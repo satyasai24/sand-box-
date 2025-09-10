@@ -47,6 +47,12 @@ namespace SandboxManager
                 return;
             }
 
+            if (!System.IO.File.Exists(pathTextBox.Text))
+            {
+                MessageBox.Show("The specified executable file does not exist.", "File Not Found", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
             Application.Name = nameTextBox.Text;
             Application.HostPath = pathTextBox.Text;
 

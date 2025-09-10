@@ -26,13 +26,6 @@ namespace SandboxManager
         ///  Required method for Designer support - do not modify
         ///  the contents of this method with the code editor.
         /// </summary>
-        private System.Windows.Forms.ComboBox appComboBox;
-        private System.Windows.Forms.Button launchButton;
-        private System.Windows.Forms.Button viewLogsButton;
-        private System.Windows.Forms.Button addButton;
-        private System.Windows.Forms.Button editButton;
-        private System.Windows.Forms.Button removeButton;
-
         private void InitializeComponent()
         {
             this.appComboBox = new System.Windows.Forms.ComboBox();
@@ -41,6 +34,7 @@ namespace SandboxManager
             this.addButton = new System.Windows.Forms.Button();
             this.editButton = new System.Windows.Forms.Button();
             this.removeButton = new System.Windows.Forms.Button();
+            this.logTextBox = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             //
             // appComboBox
@@ -102,14 +96,6 @@ namespace SandboxManager
             this.removeButton.UseVisualStyleBackColor = true;
             this.removeButton.Click += new System.EventHandler(this.removeButton_Click);
             //
-            // Form1
-            //
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
-            this.logTextBox = new System.Windows.Forms.TextBox();
-            this.SuspendLayout();
-            //
             // logTextBox
             //
             this.logTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
@@ -139,11 +125,18 @@ namespace SandboxManager
             this.Text = "Sandbox Manager";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
-        private System.Windows.Forms.TextBox logTextBox;
-
         #endregion
+
+        private System.Windows.Forms.ComboBox appComboBox;
+        private System.Windows.Forms.Button launchButton;
+        private System.Windows.Forms.Button viewLogsButton;
+        private System.Windows.Forms.Button addButton;
+        private System.Windows.Forms.Button editButton;
+        private System.Windows.Forms.Button removeButton;
+        private System.Windows.Forms.TextBox logTextBox;
     }
 }

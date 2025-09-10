@@ -8,13 +8,16 @@
 
     <Feature Id="ProductFeature" Title="Sandbox Manager" Level="1">
       <ComponentGroupRef Id="ProductComponents" />
+      <ComponentGroupRef Id="ScriptsComponents" />
       <ComponentRef Id="ApplicationShortcutDesktop" />
       <ComponentRef Id="ApplicationShortcutStartMenu" />
     </Feature>
 
     <Directory Id="TARGETDIR" Name="SourceDir">
       <Directory Id="ProgramFilesFolder">
-        <Directory Id="INSTALLFOLDER" Name="SandboxManager" />
+        <Directory Id="INSTALLFOLDER" Name="SandboxManager">
+          <Directory Id="ScriptsFolder" Name="scripts" />
+        </Directory>
       </Directory>
       <Directory Id="DesktopFolder" Name="Desktop" />
       <Directory Id="ProgramMenuFolder">
@@ -45,6 +48,12 @@
             <RegistryValue Root="HKCU" Key="Software\MyCompany\SandboxManager" Name="installed_start" Type="integer" Value="1" KeyPath="yes"/>
         </Component>
     </DirectoryRef>
+
+    <ComponentGroup Id="ScriptsComponents" Directory="ScriptsFolder">
+      <Component Id="boot.ps1" Guid="93AE4DB2-F162-4ECA-5DE8-852826A74A8B">
+        <File Source="..\..\scripts\boot.ps1" KeyPath="yes" />
+      </Component>
+    </ComponentGroup>
 
   </Product>
 </Wix>

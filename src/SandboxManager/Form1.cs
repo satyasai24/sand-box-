@@ -13,21 +13,23 @@ namespace SandboxManager
         public Form1()
         {
             InitializeComponent();
+            this.FormClosing += new FormClosingEventHandler(Form1_FormClosing);
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            applications = new List<SandboxedApplication>
-            {
-                new SandboxedApplication { Name = "Google Chrome", HostPath = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe" }
-                // We can add more applications here later
-            };
+            applications = ConfigurationService.LoadApplications();
 
             appComboBox.DataSource = applications;
             appComboBox.DisplayMember = "Name";
 
             SetupLogWatcher();
             UpdateLogView();
+        }
+
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            ConfigurationService.SaveApplications(applications);
         }
 
         private void launchButton_Click(object sender, EventArgs e)
@@ -37,7 +39,15 @@ namespace SandboxManager
                 LoggingService.Log($"Launching application: {selectedApp.Name}");
                 var config = selectedApp.GetConfiguration();
                 var launcher = new SandboxLauncher();
-                launcher.Launch(config);
+                try
+                {
+                    launcher.Launch(config);
+                }
+                catch (Exception ex)
+                {
+                    LoggingService.Log($"Error launching sandbox: {ex.Message}");
+                    MessageBox.Show($"Could not launch the sandbox. Please ensure the Windows Sandbox feature is enabled on your system.\n\nError: {ex.Message}", "Sandbox Launch Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
         }
 
@@ -84,6 +94,10 @@ namespace SandboxManager
                     }
                 }
             }
+            else
+            {
+                MessageBox.Show("Please select an application to edit.", "No Application Selected", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
         }
 
         private void removeButton_Click(object sender, EventArgs e)
@@ -95,6 +109,10 @@ namespace SandboxManager
                     applications.Remove(selectedApp);
                     RefreshAppList();
                 }
+            }
+            else
+            {
+                MessageBox.Show("Please select an application to remove.", "No Application Selected", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
 

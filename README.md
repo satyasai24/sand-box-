@@ -6,10 +6,24 @@ Sandbox Manager is a Windows desktop application that allows you to run applicat
 
 The solution consists of the following components:
 
-*   **SandboxManager.exe**: A C# Windows Forms application that provides the main user interface for managing and launching sandboxed applications.
-*   **.wsb Files**: The application dynamically generates Windows Sandbox configuration files (`.wsb`) to configure the sandbox environment for each application. These files define mapped folders, logon commands, and other sandbox settings.
-*   **LoggingService**: A static class that provides logging functionality. It logs events to a file in `%APPDATA%\SandboxManager\Logs`. This log folder is also mapped into the sandbox to allow sandboxed applications to write to the logs.
-*   **WiX Installer Script**: A `SandboxManager.wxs` file is provided to build an MSI installer for the application using the WiX Toolset.
+*   **SandboxManager.exe**: A C# Windows Forms application that provides the main user interface.
+*   **ConfigurationService**: A static class that handles loading and saving the application list to `applications.json` in the user's AppData folder.
+*   **.wsb Files**: The application dynamically generates Windows Sandbox configuration files (`.wsb`) to configure the sandbox environment.
+*   **boot.ps1**: A PowerShell script that runs on sandbox startup to enable enhanced security auditing.
+*   **LoggingService**: A static class that provides logging for the host application's events.
+*   **WiX Installer Script**: A `SandboxManager.wxs` file is provided to build an MSI installer for the application.
+*   **Unit Test Project**: A separate project containing unit tests for the core application logic.
+
+## Features
+
+### Application Management
+*   **Add, Edit, and Remove** applications from the launch list.
+*   **Configuration Persistence**: The list of applications is saved and reloaded between sessions.
+
+### Security
+*   **Sandbox Isolation**: Each application runs in a disposable Windows Sandbox, isolating it from the host system.
+*   **Enhanced Security Auditing**: On sandbox startup, a script runs to enable process creation auditing (Event ID 4688), including full command-line arguments. This provides a detailed audit trail of all activity within the sandbox, which can be viewed in the sandbox's Windows Event Viewer (under Security logs).
+*   **Host-side Logging**: The main application logs its own events (like launching an app) to a file in `%APPDATA%\SandboxManager\Logs`, which is also visible in the UI.
 
 ## Threat Model
 
@@ -37,9 +51,24 @@ To build the application and the installer from source, you will need the follow
 *   **.NET 8 SDK** (or newer)
 *   **WiX Toolset v3** (or newer)
 
+### Creating the Solution File (Optional)
+
+If you want to open the project in Visual Studio, you will need to create a solution file (`.sln`). You can do this from the command line:
+
+```bash
+# Create a new solution file
+dotnet new sln -n SandboxManager
+
+# Add the main project to the solution
+dotnet sln add src/SandboxManager/SandboxManager.csproj
+
+# Add the test project to the solution
+dotnet sln add tests/SandboxManager.Tests/SandboxManager.Tests.csproj
+```
+
 ### Building the Application
 
-You can build the C# project using the `dotnet build` command or by opening the solution in Visual Studio.
+You can build the C# project using the `dotnet build` command. If you have created a solution file, you can build the entire solution at once.
 
 ```bash
 # Navigate to the project directory
@@ -49,11 +78,23 @@ cd src/SandboxManager
 dotnet build --configuration Release
 ```
 
-The output will be in `src/SandboxManager/bin/Release/net8.0-windows/`.
+The output will be in `src/SandboxManager/bin/Release/net8.0-windows/`. Make sure to copy the `scripts` folder from the project root to this output directory so the application can find it.
 
-### Building the Installer
+## Testing
 
-The WiX installer can be built from the command line using the `candle.exe` (compiler) and `light.exe` (linker) tools from the WiX Toolset.
+The solution includes a unit test project. You can run the tests from the command line:
+
+```bash
+# Navigate to the test project directory
+cd tests/SandboxManager.Tests
+
+# Run the tests
+dotnet test
+```
+
+## Building the Installer
+
+The WiX installer can be built from the command line using the `candle.exe` (compiler) and `light.exe` (linker) tools from the WiX Toolset. The installer is configured to bundle the application executable and the `scripts` folder.
 
 1.  **Compile the WiX source file**:
     ```bash
